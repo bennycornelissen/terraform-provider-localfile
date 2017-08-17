@@ -1,3 +1,7 @@
+workspace:
+  base: /go
+  path: src/github.com/bennycornelissen/terraform-provider-localfile
+
 pipeline:
   build:
     image: golang
@@ -5,7 +9,23 @@ pipeline:
       - go get
       - go build
 
-  docker:
+  docker_local_build:
+    image: plugins/docker
+    commands:
+      - docker build -t terraform .
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
+  validate_docker_image:
+    image: plugins/docker
+    commands:
+      - docker run --rm terraform version
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
+  docker_push:
     image: plugins/docker
     repo: bennycornelissen/terraform-localfile
-    tagsi: foo
+    tags: foo
+    when:
+      event: deployment
