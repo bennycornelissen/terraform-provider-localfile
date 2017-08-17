@@ -1,0 +1,11 @@
+pipeline:
+  build:
+    image: golang
+    commands:
+      - go get
+      - go build
+
+  docker:
+    image: plugins/docker
+    repo: bennycornelissen/terraform-localfile
+    tagsi: foo
